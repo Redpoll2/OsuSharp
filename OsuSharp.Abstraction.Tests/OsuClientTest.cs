@@ -25,7 +25,7 @@ namespace OsuSharp.Abstraction.Tests
         [Fact]
         public void GetContent_WrongKey()
         {
-            Assert.ThrowsAsync<HttpRequestException>(() =>
+            Assert.ThrowsAsync<BanchoAuthorizationException>(() =>
             {
                 return client.GetContent("https://osu.ppy.sh/api/get_user?k=xd&u=D_Redpoll");
             });
