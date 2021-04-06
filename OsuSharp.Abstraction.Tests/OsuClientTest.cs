@@ -1,5 +1,4 @@
 using OsuSharp.Bancho;
-using System.Net.Http;
 using Xunit;
 
 namespace OsuSharp.Abstraction.Tests
