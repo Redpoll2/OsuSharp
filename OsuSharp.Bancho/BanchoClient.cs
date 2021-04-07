@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -17,33 +17,29 @@ namespace OsuSharp.Bancho
         }
 
         /// <summary>
-        /// Reads the HTTP content and returns the content as stream
+        /// Calls an API method and returns response as UTF-8 string
         /// </summary>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="BanchoAuthorizationException"/>
         /// <exception cref="BanchoException"/>
+        /// <exception cref="DecoderFallbackException"/>
         /// <exception cref="HttpRequestException"/>
-        public async override Task<Stream> GetContent(string uri)
+        public async override Task<string> Call(string methodPath, IDictionary<string, string> parameters)
         {
-            if (uri.StartsWith(RootDomain))
+            try
             {
-                try
-                {
-                    return await base.GetContent(uri);
-                }
-                catch (HttpRequestException ex)
-                {
-                    // i hate it. netstandart dont have StatusCode property in this exception
-                    if (ex.Message == "Response status code does not indicate success: 401 (Unauthorized).")
-                    {
-                        throw new BanchoAuthorizationException(apiKey);
-                    }
-
-                    throw new BanchoException(ex.Message, ex);
-                }
+                return await base.Call(methodPath, parameters);
             }
+            catch (HttpRequestException ex)
+            {
+                // i hate it. netstandart dont have StatusCode property in this exception
+                if (ex.Message == "Response status code does not indicate success: 401 (Unauthorized).")
+                {
+                    throw new BanchoAuthorizationException(apiKey);
+                }
 
-            return await base.GetContent(uri);
+                throw new BanchoException(ex.Message, ex);
+            }
         }
     }
 }

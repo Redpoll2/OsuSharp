@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace OsuSharp
@@ -21,13 +24,36 @@ namespace OsuSharp
         /// </summary>
         /// <exception cref="ArgumentNullException"/>
         /// <exception cref="HttpRequestException"/>
-        public async virtual Task<Stream> GetContent(string uri)
+        public async Task<Stream> GetContent(string uri)
         {
             var response = await client.GetAsync(uri);
 
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStreamAsync();
+        }
+
+        /// <summary>
+        /// Calls an API method and returns response as UTF-8 string
+        /// </summary>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="DecoderFallbackException"/>
+        /// <exception cref="HttpRequestException"/>
+        public async virtual Task<string> Call(string methodPath, IDictionary<string, string> parameters)
+        {
+            if (string.IsNullOrWhiteSpace(methodPath))
+            {
+                throw new ArgumentNullException(nameof(methodPath));
+            }
+
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            var stream = await GetContent(RootDomain + '/' + methodPath + '?' + string.Join('&', parameters));
+
+            return Encoding.UTF8.GetString((stream as MemoryStream).GetBuffer());
         }
 
         /// <summary>
