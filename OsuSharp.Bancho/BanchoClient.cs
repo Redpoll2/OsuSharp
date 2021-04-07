@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace OsuSharp.Bancho
 {
-    public class BanchoClient : OsuClient
+    public partial class BanchoClient : OsuClient, IBanchoClient
     {
         private readonly string apiKey;
 
@@ -28,6 +28,8 @@ namespace OsuSharp.Bancho
         {
             try
             {
+                parameters.Add("k", apiKey);
+
                 return await base.Call(methodPath, parameters);
             }
             catch (HttpRequestException ex)
