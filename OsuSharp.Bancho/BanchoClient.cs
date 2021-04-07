@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -15,6 +16,13 @@ namespace OsuSharp.Bancho
             this.apiKey = apiKey;
         }
 
+        /// <summary>
+        /// Reads the HTTP content and returns the content as stream
+        /// </summary>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="BanchoAuthorizationException"/>
+        /// <exception cref="BanchoException"/>
+        /// <exception cref="HttpRequestException"/>
         public async override Task<Stream> GetContent(string uri)
         {
             if (uri.StartsWith(RootDomain))
@@ -30,6 +38,8 @@ namespace OsuSharp.Bancho
                     {
                         throw new BanchoAuthorizationException(apiKey);
                     }
+
+                    throw new BanchoException(ex.Message, ex);
                 }
             }
 
