@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,6 +54,17 @@ namespace OsuSharp
             var stream = await GetContent(RootDomain + '/' + methodPath + '?' + string.Join('&', parameters));
 
             return Encoding.UTF8.GetString((stream as MemoryStream).GetBuffer());
+        }
+
+        /// <summary>
+        /// Calls an API method and returns response as specified .NET type
+        /// </summary>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="DecoderFallbackException"/>
+        /// <exception cref="HttpRequestException"/>
+        public async Task<TResult> Call<TResult>(string methodPath, IDictionary<string, string> parameters)
+        {
+            return JsonConvert.DeserializeObject<TResult>(await Call(methodPath, parameters));
         }
 
         /// <summary>
